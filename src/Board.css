@@ -55,8 +55,8 @@
   }
   
   .selected-color-display {
-    width: 80px;
-    height: 80px;
+    width: 8vw;
+    height: 8vw;
     margin: 10px auto;
   }
   
@@ -71,8 +71,8 @@
   }
   
   .selected-color-box {
-    width: 30px;
-    height: 30px;
+    width: 4vw;
+    height: 4vw;
     margin: 4px;
   }
   

@@ -1,7 +1,7 @@
 // Board.js
 import './Board.css';
 import React from 'react';
-import { Button,Frame, MenuList, MenuListItem, Monitor, Separator, styleReset } from 'react95';
+import {Table, TableBody, TableBodyCell, TableRow, Frame, Button, Tooltip, WindowHeader, styleReset } from 'react95';
 import original from 'react95/dist/themes/original';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import ms_sans_serif from 'react95/dist/fonts/ms_sans_serif.woff2';
@@ -34,6 +34,8 @@ const Board = () => {
   const [submissions, setSubmissions] = React.useState(0);
   const [score, setScore] = React.useState(0);
   const [selectedColors, setSelectedColors] = React.useState([]);
+  const [showTip, setTip] = React.useState(true);
+  
 
   const colColors = [
     // Colors as defined previously...
@@ -126,13 +128,65 @@ const Board = () => {
     return 5; 
   };
 
-  return (
+  const getGameRules = () => (
     
+    <div>
+      Select a tile with your guessed color. <br></br>
+          
+      Press the Submit button to check your guess <br></br>
+          
+      Try to match the color in the fewest attempts!
+    </div>
+    
+  );
+
+  React.useEffect(() => {
+    setTip(true);
+  }, []);
+  return (
     <ThemeProvider theme={original}>
       <div className="board-container">
       <GlobalStyles />
-        <Frame boxShadow="in" bg="white" className="board-frame">
+        {showTip && (
+          <Frame
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '300px',
+              zIndex: 10,
+            }}
+          >
+            <WindowHeader className="window-header">
+              <span>Welcome to Guess-Hue!</span>
+              <Button
+                onClick={() => setTip(false)}
+                style={{ float: 'right', margin: '1px' }}
+              >
+                <span role="img" aria-label="close">
+                  ❌
+                </span>
+              </Button>
+            </WindowHeader>
+            <Frame  padding={20} style={{ textAlign: 'center' }}>
+              {getGameRules()}
+              <Button
+                style={{ marginTop: '20px', marginBottom: '10px' }}
+                onClick={() => setTip(false)}
+              >
+                Start Game
+              </Button>
+            </Frame>
+          </Frame>
+        )}
+
+        <Frame
          
+          bg="white"
+          className="board-frame"
+        >
+          <h1 className="board-title">Guess-Hue</h1>
           <div className="board">
             {Array.from({ length: 9 }, (_, rowIndex) =>
               Array.from({ length: 15 }, (_, colIndex) => (
@@ -141,7 +195,7 @@ const Board = () => {
                   className={`tile ${
                     selectedTile === colColors[colIndex][rowIndex] ? 'selected-tile' : ''
                   }`}
-                  boxShadow="in"
+                  
                   onClick={() => handleClick(colColors[colIndex][rowIndex])}
                 >
                   <div
@@ -154,19 +208,31 @@ const Board = () => {
               ))
             )}
           </div>
-  
-          {hintText && <p className="hint-text">{hintText}</p>}
-  
-          {hintText !== `Your Score: ${score}` && selectedTile && (
-            <Frame boxShadow="in" className="selected-color-display" style={{ backgroundColor: selectedTile }} />
+
+          {hintText && (
+            <p className="hint-text">{hintText}</p>
           )}
-  
+
           {hintText !== `Your Score: ${score}` && selectedTile && (
-            <Button className="submit-button" onClick={handleSubmit}>
+            <Frame
+              
+              className="selected-color-display"
+              style={{
+                backgroundColor: selectedTile,
+              }}
+            />
+          )}
+          <br></br>
+          {hintText !== `Your Score: ${score}` && selectedTile && (
+            <Button
+              className="submit-button"
+              onClick={handleSubmit}
+            >
+              
               Submit
             </Button>
           )}
-  
+
           {hintText === `Your Score: ${score}` && selectedColors.length > 0 && (
             <div>
               <p>Selected Colors:</p>
@@ -174,7 +240,7 @@ const Board = () => {
                 {selectedColors.map((color, index) => (
                   <Frame
                     key={index}
-                    boxShadow="in"
+                   
                     className="selected-color-box"
                     style={{ backgroundColor: color }}
                   />
@@ -182,24 +248,25 @@ const Board = () => {
               </div>
             </div>
           )}
-  
+
           {hintText === `Your Score: ${score}` && (
-            <Button className="play-again-button" onClick={() => {
-              setSelectedTile(null);
-              setHintText('Try to guess this color!');
-              setSubmissions(0);
-              setScore(0);
-              setSelectedColors([]);
-            }}>
-              Play Again
+            <Button
+              className="play-again-button"
+              onClick={() => {
+                setSelectedTile(null);
+                setHintText('Try to guess this color!');
+                setSubmissions(0);
+                setScore(0);
+                setSelectedColors([]);
+              }}
+            >
+              Share
             </Button>
           )}
         </Frame>
       </div>
     </ThemeProvider>
   );
-  
-  
 };
 
 export default Board;
